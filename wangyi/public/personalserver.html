@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="author" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+    <title>热门歌曲</title>
+    
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    
+    <!-- Main css -->
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Work+Sans:300,400,700" rel="stylesheet">
+    
+    </head>
+<body>
+        <nav class="navbar navbar-default" role="navigation">
+                <div class="container-fluid"> 
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse"
+                            data-target="#example-navbar-collapse">
+                        <span class="sr-only">切换导航</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="index.html">首页</a>
+                </div>
+                <div class="collapse navbar-collapse" id="example-navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#">介绍</a></li>
+                        <li><a href="#">语音</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                搜索 <b class="caret"></b>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="search_songs.html">歌曲</a></li>
+                                <li><a href="search_singers.html">歌手</a></li>
+                                <!-- <li><a href="#">歌单</a></li> -->
+                                <!-- <li class="divider"></li> -->
+                                <!-- <li><a href="#">分离的链接</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#">另一个分离的链接</a></li> -->
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                </div>
+            </nav>
+            
+    
+    <script type="text/javascript" src="luyin.js"></script>
+    <script src="js/jquery.js"></script>
+    <div>
+        <audio controls autoplay></audio>
+        <input id="record" onclick="startRecording()"  type="button" value="录音" />
+        <input id="stop" onclick="stopRecording()" type="button" disabled="true" value="停止" />    
+        <input id="submit" onclick="uploadAudio()" type="button" value="提交" />
+        <input id="search" onclick="search()" type="button" value="搜索" />
+    </div>
+    <script>
+        var recorder;
+        var audio = document.querySelector('audio');
+        var checknum = 0;
+        // var express = require('express');
+        // var router = express.Router();
+        // var multer = require('multer');
+        // const fs = require('fs')
+        function startRecording() {
+        	document.getElementById("record").disabled=true;  
+	        document.getElementById("stop").disabled=false;
+            HZRecorder.get(function (rec) {
+                recorder = rec;
+                recorder.start();
+            });
+        }
+        function stopRecording() {
+        	document.getElementById("record").disabled=false;  
+	        document.getElementById("stop").disabled=true;
+            recorder.stop();
+        }
+              
+        function uploadAudio() {
+            
+            //提交到服务器
+            recorder.upload("/yuyinshibie", function (state, e) {
+                switch (state) {
+                    case 'uploading':
+                        //var percentComplete = Math.round(e.loaded * 100 / e.total) + '%';
+                        break;
+                    case 'ok':
+                        //alert(e.target.responseText);
+                        alert("上传成功");
+                        break;
+                    case 'error':
+                        alert("上传失败");
+                        break;
+                    case 'cancel':
+                        alert("上传被取消");
+                        break;
+                }
+            });
+        }
+
+    </script>
+    <script src="js/weathersearch.js"></script>
+    <h1 id="song"></h1>
+    <h1 id="temperature"></h1>
+    <script language="javascript">
+        function ReadFile(data) {
+            var box = document.getElementById("song");
+            box.innerHTML = data;
+        }        
+        var xhr = new XMLHttpRequest();
+        xhr.onload = function () {            
+            ReadFile(xhr.responseText);
+        };
+        try {
+            xhr.open("get", "test.txt", true);
+            xhr.send();
+        }
+        catch (ex) {
+            ReadFile(ex.message);
+        }        
+    </script>
+</body>
+</html>
